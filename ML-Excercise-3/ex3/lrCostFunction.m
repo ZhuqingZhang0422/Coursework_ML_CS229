@@ -7,11 +7,9 @@ function [J, grad] = lrCostFunction(theta, X, y, lambda)
 
 % Initialize some useful values
 m = length(y); % number of training examples
-
 % You need to return the following variables correctly 
 J = 0;
 grad = zeros(size(theta));
-
 % ====================== YOUR CODE HERE ======================
 % Instructions: Compute the cost of a particular choice of theta.
 %               You should set J to the cost.
@@ -25,26 +23,14 @@ grad = zeros(size(theta));
 %
 %       Each row of the resulting matrix will contain the value of the
 %       prediction for that example. You can make use of this to vectorize
-%       the cost function and gradient computations. 
+%       the cost function and gradient computations.
 %
-% Hint: When computing the gradient of the regularized cost function, 
-%       there're many possible vectorized solutions, but one solution
-%       looks like:
-%           grad = (unregularized gradient for logistic regression)
-%           temp = theta; 
-%           temp(1) = 0;   % because we don't add anything for j = 0  
-%           grad = grad + YOUR_CODE_HERE (using the temp variable)
-%
-
-
-
-
-
-
-
-
-
-
+%   Logistic regression cost function with regularization
+    J = 1/m*(sum(-y.*log(sigmoid(X*theta))-(ones(size(y)) - y).*log(ones(size(X*theta))-sigmoid(X*theta)))) + lambda/(2*m)*sum(theta.^2);
+    J = J - lambda/(2*m)*theta(1)^2; 
+    grad = 1/m*X'*(sigmoid(X*theta)-y)+lambda/m*theta;
+    grad(1) = grad(1)-lambda/m*theta(1);
+  
 % =============================================================
 
 grad = grad(:);
