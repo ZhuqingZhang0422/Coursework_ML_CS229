@@ -61,27 +61,47 @@ Theta2_grad = zeros(size(Theta2));
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
+    
+% Part 1: Forward Propagation
+X = [ones(m, 1) X];
+hidden = sigmoid(X*Theta1');
+hidden = [ones(m, 1), hidden];
+out = sigmoid(hidden*Theta2'); 
 
+Y = zeros(m, num_labels); 
+for i=1:m,
+    Y(i, y(i, 1)) = 1;
+end
 
+% cost function with regularization
+J = 1/m*(sum(sum(-Y.*log(out) - (ones(size(Y))-Y).*log(ones(size(out))-out))))+ lambda/(2*m)*(sum(sum(Theta1(:, 2:end) .^ 2))+sum(sum(Theta2(:, 2:end) .^ 2)));
+    
+% Part 2: Backward Propagation
 
+Delta_1 = zeros(size(Theta1));  % Size of (25x401)
+Delta_2 = zeros(size(Theta2));  % Size of (10x26)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-% -------------------------------------------------------------
-
+for i=1:m,
+% Same as shown in the lecture slides
+    a_1 = X(i, :);  
+    z_2 = a_1*Theta1';  
+    a_2 = sigmoid(z_2);
+    a_2 = [1 a_2]; 
+    z_3 = a_2*Theta2'; 
+    a_3 = sigmoid(z_3);
+    d_3 = a_3 - Y(i, :); 
+    d_2 = d_3*Theta2.*sigmoidGradient([1 z_2]);  
+    d_2 = d_2(2:end);  % 1x25  
+    Delta_1 = Delta_1 + d_2'*a_1;  
+    Delta_2 = Delta_2 + d_3'*a_2;
+end
+% Calculate theta matrixes
+    Theta1_grad = 1/m*Delta_1;
+    Theta2_grad = 1/m*Delta_2;
+  
+% Part 3: Regularization 
+    Theta1_grad = Theta1_grad + lambda/m*[zeros(size(Theta1, 1), 1) Theta1(:, 2:end)];
+    Theta2_grad = Theta2_grad + lambda/m*[zeros(size(Theta2, 1), 1) Theta2(:, 2:end)]; 
 % =========================================================================
 
 % Unroll gradients
