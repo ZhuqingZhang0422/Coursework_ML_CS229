@@ -20,7 +20,16 @@ idx = zeros(size(X,1), 1);
 %
 % Note: You can use a for-loop over the examples to compute this.
 %
-
+for i=1:size(X, 1),
+        class = intmax;
+        for j=1:K,
+            dist = sum((X(i, :)-centroids(j, :)).^2);
+            if dist<class,
+                idx(i) = j;
+                class = dist;
+            end
+        end
+    end
 
 
 
