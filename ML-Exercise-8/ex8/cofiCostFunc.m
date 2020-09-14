@@ -39,21 +39,28 @@ Theta_grad = zeros(size(Theta));
 %        Theta_grad - num_users x num_features matrix, containing the 
 %                     partial derivatives w.r.t. to each element of Theta
 %
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ % Cost function
+    M = (X*Theta'-Y).^2;
+    M = M(R==1);  % or M.*R
+    J = 1/2*sum(M(:));
+    % regularized 
+    J = J + lambda/2*(sum(sum(Theta.^2)))+lambda/2*(sum(sum(X.^2)));
+    % Vectorized, Gradient 
+    for i=1:num_movies,  % improve the double loop 
+        idx = find(R(i, :)==1);  % fix i, get j
+        Theta_temp = Theta(idx, :);
+        Y_temp = Y(i, idx);
+        
+        X_grad(i, :) = (X(i, :)*Theta_temp'-Y_temp)*Theta_temp;
+        X_grad(i, :) = X_grad(i, :)+lambda*X(i, :);
+    end
+    for j=1:num_users,  
+        idx = find(R(:, j)==1);  % fix j, get i
+        X_temp = X(idx, :); 
+        Y_temp = Y(idx, j);
+        Theta_grad(j, :) = (X_temp*Theta(j, :)'-Y_temp)'*X_temp;
+        Theta_grad(j, :) = Theta_grad(j, :)+lambda*Theta(j, :);
+    end
 
 % =============================================================
 
